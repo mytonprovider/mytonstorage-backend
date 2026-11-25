@@ -11,7 +11,7 @@
 
 | Шаг | Где | Команда |
 |-----|-----|---------|
-| 1 | Dev-машина | `BACKEND_IMAGE=... TONUTILS_STORAGE_IMAGE=... task image:build:push` |
+| 1 | Dev-машина | `BACKEND_IMAGE=... task image:build:push` |
 | 2 | VPS | Клон репо, `deploy/` + `deploy/secrets/agents-ca.crt` |
 | 3 | VPS | `task hub:init` → правка `deploy/.env.hub` |
 | 4 | VPS | `task hub:up` |
@@ -22,7 +22,6 @@ Hub compose ([docker-compose.hub.yml](docker-compose.hub.yml)) — `pull_policy:
 
 ```bash
 BACKEND_IMAGE=<user>/mytonstorage-backend:latest \
-TONUTILS_STORAGE_IMAGE=<user>/mytonutils-storage:v1.5.1 \
 task image:build:push
 ```
 
@@ -38,7 +37,8 @@ task hub:health
 ```
 
 Обязательно в `.env.hub`:
-- `BACKEND_IMAGE`, `TONUTILS_STORAGE_IMAGE`
+- `BACKEND_IMAGE`
+- `TONUTILS_STORAGE_IMAGE` — `ghcr.io/mytonprovider/tonutils-storage:v1.5.1` (в этом репо не собирается)
 - `SYSTEM_HOST` — домен фронта (TON Connect proof)
 - `AGENT_*` — как на coordinator mytonprovider
 - `TONUTILS_STORAGE_EXTERNAL_IP` — публичный IP/DNS хоста
@@ -50,7 +50,7 @@ CA агентов: `deploy/secrets/agents-ca.crt` — см. [secrets/README.md](
 
 ## Локальная разработка
 
-[docker-compose.yml](docker-compose.yml) + `task deploy:up` — сборка на месте. См. [README.ru.md](../README.ru.md).
+[docker-compose.yml](docker-compose.yml) + `task deploy:up` — backend собирается на месте. См. [README.ru.md](../README.ru.md).
 
 ## Фронтенд (отдельный деплой)
 

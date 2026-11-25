@@ -147,26 +147,6 @@ tasks:
           --build-arg BUILD_TAGS="${BUILD_TAGS:-}" \
           -t "${BACKEND_IMAGE}" .
 
-  image:build:tonutils-storage:
-    desc: Build tonutils-storage image locally (set TONUTILS_STORAGE_IMAGE)
-    cmds:
-      - |
-        if [ -z "${TONUTILS_STORAGE_IMAGE:-}" ]; then
-          echo "TONUTILS_STORAGE_IMAGE is required, e.g. TONUTILS_STORAGE_IMAGE=user/mytonutils-storage:v1.5.1 task image:build:tonutils-storage"
-          exit 1
-        fi
-      - |
-        docker build -f deploy/tonutils-storage.Dockerfile \
-          --build-arg TONUTILS_STORAGE_VERSION="${TONUTILS_STORAGE_VERSION:-v1.5.1}" \
-          -t "${TONUTILS_STORAGE_IMAGE}" \
-          deploy
-
-  image:build:
-    desc: Build backend and tonutils-storage images (set BACKEND_IMAGE and TONUTILS_STORAGE_IMAGE)
-    deps:
-      - image:build:backend
-      - image:build:tonutils-storage
-
   image:push:backend:
     desc: Push prebuilt backend image (set BACKEND_IMAGE)
     cmds:
@@ -177,27 +157,11 @@ tasks:
         fi
       - docker push "${BACKEND_IMAGE}"
 
-  image:push:tonutils-storage:
-    desc: Push prebuilt tonutils-storage image (set TONUTILS_STORAGE_IMAGE)
-    cmds:
-      - |
-        if [ -z "${TONUTILS_STORAGE_IMAGE:-}" ]; then
-          echo "TONUTILS_STORAGE_IMAGE is required"
-          exit 1
-        fi
-      - docker push "${TONUTILS_STORAGE_IMAGE}"
-
-  image:push:
-    desc: Push backend and tonutils-storage images
-    deps:
-      - image:push:backend
-      - image:push:tonutils-storage
-
   image:build:push:
-    desc: Build and push backend + tonutils-storage images
+    desc: Build and push backend image (set BACKEND_IMAGE)
     cmds:
-      - task: image:build
-      - task: image:push
+      - task: image:build:backend
+      - task: image:push:backend
 
   deploy:storage:list:
     desc: List bags in tonutils-storage via HTTP API

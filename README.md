@@ -44,13 +44,14 @@ Dev backend (`BACKEND_BUILD_TAGS=debug`) enables CORS for `http://localhost:3000
 
 ## VPS deploy (Docker Hub)
 
-**Recommended for production:** build images on a dev machine; on the VPS only `pull` + compose — no Go compile on the server.
+**Recommended for production:** build the backend image on a dev machine; on the VPS only `pull` + compose — no Go compile on the server.
 
 | Image | Task (dev machine) |
 |-------|-------------------|
 | backend | `BACKEND_IMAGE=<user>/mytonstorage-backend:latest task image:build:backend` |
-| tonutils-storage | `TONUTILS_STORAGE_IMAGE=<user>/mytonutils-storage:v1.5.1 task image:build:tonutils-storage` |
-| both | `BACKEND_IMAGE=... TONUTILS_STORAGE_IMAGE=... task image:build:push` |
+| backend, build + push | `BACKEND_IMAGE=... task image:build:push` |
+
+The tonutils-storage image is not built here: `TONUTILS_STORAGE_IMAGE=ghcr.io/mytonprovider/tonutils-storage:v1.5.1`.
 
 For a release backend image leave `BUILD_TAGS` unset (or empty).
 

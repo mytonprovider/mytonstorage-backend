@@ -11,7 +11,7 @@ Stack (hub compose):
 
 | Step | Where | Command |
 |------|-------|---------|
-| 1 | Dev machine | `BACKEND_IMAGE=... TONUTILS_STORAGE_IMAGE=... task image:build:push` |
+| 1 | Dev machine | `BACKEND_IMAGE=... task image:build:push` |
 | 2 | VPS | Clone repo, `deploy/` + `deploy/secrets/agents-ca.crt` |
 | 3 | VPS | `task hub:init` → edit `deploy/.env.hub` |
 | 4 | VPS | `task hub:up` |
@@ -22,13 +22,12 @@ Hub compose ([docker-compose.hub.yml](docker-compose.hub.yml)) uses `pull_policy
 
 ```bash
 BACKEND_IMAGE=<user>/mytonstorage-backend:latest \
-TONUTILS_STORAGE_IMAGE=<user>/mytonutils-storage:v1.5.1 \
 task image:build:push
 ```
 
 Release backend (no debug CORS): omit `BUILD_TAGS` or `BUILD_TAGS=`.
 
-Separate steps: `task image:build:backend`, `task image:build:tonutils-storage`, `task image:push`.
+Separate steps: `task image:build:backend`, `task image:push:backend`.
 
 ### VPS: pull + up
 
@@ -41,7 +40,8 @@ task hub:health
 ```
 
 Required in `.env.hub`:
-- `BACKEND_IMAGE`, `TONUTILS_STORAGE_IMAGE`
+- `BACKEND_IMAGE`
+- `TONUTILS_STORAGE_IMAGE` — `ghcr.io/mytonprovider/tonutils-storage:v1.5.1` (not built in this repo)
 - `SYSTEM_HOST` — public frontend domain (TON Connect proof)
 - `AGENT_ENDPOINTS`, `AGENT_AUTH_TOKEN`, `AGENT_CA_CERT_FILE` — same as mytonprovider coordinator
 - `TONUTILS_STORAGE_EXTERNAL_IP` — host public IPv4 or DNS (overlay DHT)
@@ -56,14 +56,13 @@ Stop: `task hub:down`.
 | Task | Description |
 |------|-------------|
 | `image:build:backend` | Build backend image (`BACKEND_IMAGE`) |
-| `image:build:tonutils-storage` | Build storage daemon image (`TONUTILS_STORAGE_IMAGE`) |
-| `image:build` / `image:push` / `image:build:push` | Build and/or push both |
+| `image:push:backend` / `image:build:push` | Push, or build and push, the backend image |
 | `hub:init` | Create `.env.hub`, generate `SYSTEM_PRIVATE_KEY` if placeholder |
 | `hub:up` / `down` / `ps` / `logs` / `hub:health` | Hub stack lifecycle |
 
 ## Local dev (build on host)
 
-Uses [docker-compose.yml](docker-compose.yml) with `task deploy:up` — compiles images locally. See root [README.md](../README.md).
+Uses [docker-compose.yml](docker-compose.yml) with `task deploy:up` — compiles the backend image locally. See root [README.md](../README.md).
 
 ## Frontend (separate deploy)
 

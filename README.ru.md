@@ -53,13 +53,14 @@ Backend в dev-сборке (`BACKEND_BUILD_TAGS=debug`) отдаёт CORS дл�
 
 ## Деплой на VPS (Docker Hub)
 
-**Рекомендуется для продакшена:** сборка образов на dev-машине, на VPS только `pull` + compose — без компиляции Go на сервере.
+**Рекомендуется для продакшена:** сборка образа backend на dev-машине, на VPS только `pull` + compose — без компиляции Go на сервере.
 
 | Образ | Task (dev-машина) |
 |-------|-------------------|
 | backend | `BACKEND_IMAGE=<user>/mytonstorage-backend:latest task image:build:backend` |
-| tonutils-storage | `TONUTILS_STORAGE_IMAGE=<user>/mytonutils-storage:v1.5.1 task image:build:tonutils-storage` |
-| оба сразу | `BACKEND_IMAGE=... TONUTILS_STORAGE_IMAGE=... task image:build:push` |
+| backend, build + push | `BACKEND_IMAGE=... task image:build:push` |
+
+Образ tonutils-storage здесь не собирается: `TONUTILS_STORAGE_IMAGE=ghcr.io/mytonprovider/tonutils-storage:v1.5.1`.
 
 Для release-образа backend не задавай `BUILD_TAGS` (или `BUILD_TAGS=`).
 
