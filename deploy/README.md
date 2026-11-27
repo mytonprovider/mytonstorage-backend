@@ -7,22 +7,24 @@ Stack (hub compose):
 - `tonutils-storage` (image from registry)
 - `postgres` (official image)
 
-## Docker Hub (recommended for VPS)
+## GHCR (recommended for VPS)
+
+The image is published by the `publish` job in `CI` after checks on every push to `master` (`ghcr.io/mytonprovider/mytonstorage-backend:<tag>`, the tag is the first 7 characters of the commit).
 
 | Step | Where | Command |
 |------|-------|---------|
-| 1 | Dev machine | `BACKEND_IMAGE=... task image:build:push` |
+| 1 | GitHub | Merge to `master` → `publish` job in `CI` pushes the image |
 | 2 | VPS | Clone repo, `deploy/` + `deploy/secrets/agents-ca.crt` |
 | 3 | VPS | `task hub:init` → edit `deploy/.env.hub` |
 | 4 | VPS | `task hub:up` |
 
 Hub compose ([docker-compose.hub.yml](docker-compose.hub.yml)) uses `pull_policy: always` and skips local `build:`.
 
-### Dev machine: build + push
+### Build and push by hand (dev machine, fallback)
 
 ```bash
-BACKEND_IMAGE=<user>/mytonstorage-backend:latest \
-task image:build:push
+docker login ghcr.io
+BACKEND_IMAGE=ghcr.io/mytonprovider/mytonstorage-backend:<tag> task image:build:push
 ```
 
 Release backend (no debug CORS): omit `BUILD_TAGS` or `BUILD_TAGS=`.

@@ -16,7 +16,7 @@ Backend for uploading and managing files on TON Storage:
 
 ## Local development (Docker)
 
-**Requires:** [Docker](https://docs.docker.com/), [Task](https://taskfile.dev), Go 1.25+ (for local builds outside containers).
+**Requires:** [Docker](https://docs.docker.com/), [Task](https://taskfile.dev), Go 1.26+ (for local builds outside containers).
 
 Container stack: **PostgreSQL**, **tonutils-storage** (v1.5.1), **backend**.
 
@@ -35,21 +35,12 @@ Copy `deploy/.env.example` to `deploy/.env`, or run `task deploy:init`.
 
 ### Frontend
 
-Dev backend (`BACKEND_BUILD_TAGS=debug`) enables CORS for `http://localhost:3000`.
+[mytonstorage-frontend](https://github.com/mytonprovider/mytonstorage-frontend): its dev server proxies `/api`, point it at this backend with `BACKEND_PROXY_TARGET=http://localhost:9092`.
+Setup and TON Connect notes are in its README.
 
-1. Clone [mytonstorage-org](https://github.com/dearjohndoe/mytonstorage-org)
-2. Point `lib/api.ts` to `http://localhost:9092`
-3. `npm install && npm run dev`
-4. Keep `SYSTEM_HOST=localhost` in `deploy/.env` for TON Connect
+## VPS deploy
 
-## VPS deploy (Docker Hub)
-
-**Recommended for production:** build the backend image on a dev machine; on the VPS only `pull` + compose — no Go compile on the server.
-
-| Image | Task (dev machine) |
-|-------|-------------------|
-| backend | `BACKEND_IMAGE=<user>/mytonstorage-backend:latest task image:build:backend` |
-| backend, build + push | `BACKEND_IMAGE=... task image:build:push` |
+The image is published by the `publish` job in `CI` after checks on every push to `master`: `ghcr.io/mytonprovider/mytonstorage-backend:<tag>`, the tag is the first 7 characters of the commit. Manual `task image:build:push` stays as a fallback.
 
 The tonutils-storage image is not built here: `TONUTILS_STORAGE_IMAGE=ghcr.io/mytonprovider/tonutils-storage:v1.5.1`.
 
@@ -66,7 +57,7 @@ task hub:health
 
 Set `BACKEND_IMAGE`, `TONUTILS_STORAGE_IMAGE`, `SYSTEM_HOST=mytonstorage.org`, `AGENT_*`, and `TONUTILS_STORAGE_EXTERNAL_IP` in `.env.hub`.
 
-Frontend is deployed separately — [mytonstorage-org](https://github.com/rudolfkova/mytonstorage-org) static build + nginx.
+Frontend is deployed separately: [mytonstorage-frontend](https://github.com/mytonprovider/mytonstorage-frontend).
 
 More detail: [deploy/README.md](deploy/README.md).
 

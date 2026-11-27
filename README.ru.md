@@ -16,7 +16,7 @@ Backend для загрузки и управления файлами в TON St
 
 ## Локальная разработка (Docker)
 
-**Нужно:** [Docker](https://docs.docker.com/), [Task](https://taskfile.dev), Go 1.25+ (для локальной сборки вне контейнера).
+**Нужно:** [Docker](https://docs.docker.com/), [Task](https://taskfile.dev), Go 1.26+ (для локальной сборки вне контейнера).
 
 Стек в контейнерах: **PostgreSQL**, **tonutils-storage** (v1.5.1), **backend**.
 
@@ -44,21 +44,12 @@ API: `http://localhost:9092` (порт задаётся `BACKEND_PORT` в `deplo
 
 ### Фронтенд (локально)
 
-Backend в dev-сборке (`BACKEND_BUILD_TAGS=debug`) отдаёт CORS для `http://localhost:3000`.
+[mytonstorage-frontend](https://github.com/mytonprovider/mytonstorage-frontend): его dev-сервер проксирует `/api`, на этот backend его направляет `BACKEND_PROXY_TARGET=http://localhost:9092`.
+Настройка и TON Connect — в его README.
 
-1. Клонируй [mytonstorage-org](https://github.com/rudolfkova/mytonstorage-org)
-2. В `lib/api.ts` укажи `http://localhost:9092` вместо prod URL
-3. `npm install && npm run dev`
-4. `SYSTEM_HOST=localhost` в `deploy/.env` (для TON Connect proof)
+## Деплой на VPS
 
-## Деплой на VPS (Docker Hub)
-
-**Рекомендуется для продакшена:** сборка образа backend на dev-машине, на VPS только `pull` + compose — без компиляции Go на сервере.
-
-| Образ | Task (dev-машина) |
-|-------|-------------------|
-| backend | `BACKEND_IMAGE=<user>/mytonstorage-backend:latest task image:build:backend` |
-| backend, build + push | `BACKEND_IMAGE=... task image:build:push` |
+Образ публикует задание `publish` в `CI` после проверок при каждом push в `master`: `ghcr.io/mytonprovider/mytonstorage-backend:<tag>`, тег — первые 7 символов коммита. Ручной `task image:build:push` остаётся запасным путём.
 
 Образ tonutils-storage здесь не собирается: `TONUTILS_STORAGE_IMAGE=ghcr.io/mytonprovider/tonutils-storage:v1.5.1`.
 
@@ -75,7 +66,7 @@ task hub:health
 
 В `.env.hub` задай `BACKEND_IMAGE`, `TONUTILS_STORAGE_IMAGE`, `SYSTEM_HOST=mytonstorage.org`, `AGENT_*`, `TONUTILS_STORAGE_EXTERNAL_IP` (публичный IP/DNS хоста).
 
-Фронтенд — отдельно: [mytonstorage-org](https://github.com/rudolfkova/mytonstorage-org), статика + nginx (`NEXT_PUBLIC_API_BASE=https://mytonstorage.org`).
+Фронтенд — отдельно: [mytonstorage-frontend](https://github.com/mytonprovider/mytonstorage-frontend).
 
 Подробнее: [deploy/README.ru.md](deploy/README.ru.md).
 
