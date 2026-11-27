@@ -3,7 +3,7 @@ package agentrpc
 import (
 	"testing"
 
-	providerchecksv1 "github.com/rudolfkova/mytonprovider-backend/contracts/gen/go/providerchecks/v1"
+	providerchecksv1 "github.com/mytonprovider/mytonprovider-agent/contracts/gen/go/providerchecks/v1"
 )
 
 func TestMergeStorageRatesRows_PrefersOkResult(t *testing.T) {

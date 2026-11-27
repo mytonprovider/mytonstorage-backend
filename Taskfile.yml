@@ -143,7 +143,7 @@ tasks:
           exit 1
         fi
       - |
-        docker build -f Dockerfile \
+        docker build --platform linux/amd64 -f Dockerfile \
           --build-arg BUILD_TAGS="${BUILD_TAGS:-}" \
           -t "${BACKEND_IMAGE}" .
 
@@ -178,13 +178,6 @@ tasks:
     desc: go mod tidy
     cmds:
       - go mod tidy
-
-  mod:sum:contracts:
-    desc: Refresh go.sum checksums for contracts (run before Docker image build)
-    cmds:
-      - go mod edit -dropreplace=github.com/rudolfkova/mytonprovider-backend/contracts
-      - GOPRIVATE=github.com/rudolfkova/* go mod tidy
-      - go mod edit -replace=github.com/rudolfkova/mytonprovider-backend/contracts=../mytonprovider-backend/contracts
 
   test:build:
     desc: Verify release and debug builds compile

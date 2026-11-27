@@ -2,14 +2,10 @@ FROM golang:1.26-bookworm AS builder
 
 WORKDIR /src
 
-ENV GOPRIVATE=github.com/rudolfkova/*
-
 COPY go.mod go.sum ./
 COPY . .
 
-# go.mod keeps a local replace for dev; production image fetches contracts from GitHub.
-RUN go mod edit -dropreplace=github.com/rudolfkova/mytonprovider-backend/contracts && \
-    go mod download && \
+RUN go mod download && \
     go mod verify
 
 ARG BUILD_TAGS=debug
