@@ -23,4 +23,4 @@ Set in `deploy/.env`:
 
 Backend no longer listens on UDP 16167. `tonutils-storage` UDP 47431 remains required for bag overlay.
 
-Set `TONUTILS_STORAGE_EXTERNAL_IP` in `deploy/.env` to the host's public IPv4 or DNS name (e.g. `vm05.proxmox.ip2dns.net`). The storage entrypoint patches `config.json` on start (`ExternalIP` + `ListenAddr`). Without it, bags seed locally but providers cannot find the node in DHT (`peers: 0`).
+Set `TONUTILS_STORAGE_EXTERNAL_IP` in `deploy/.env` to the host's public IPv4 or DNS name (e.g. `storage.example.com`). The storage entrypoint patches `config.json` on start (`ExternalIP` + `ListenAddr`). Without it, bags seed locally but providers cannot find the node in DHT (`peers: 0`).

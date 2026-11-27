@@ -96,34 +96,34 @@ tasks:
         fi
 
   hub:up:
-    desc: Pull and start deploy stack from Docker Hub images (no local build)
+    desc: Pull and start deploy stack from registry images (no local build)
     deps:
       - hub:init
     cmds:
       - docker compose --env-file deploy/.env.hub -f deploy/docker-compose.hub.yml up -d
 
   hub:down:
-    desc: Stop Docker Hub deploy stack (keep volumes)
+    desc: Stop registry deploy stack (keep volumes)
     cmds:
       - docker compose --env-file deploy/.env.hub -f deploy/docker-compose.hub.yml down
 
   hub:ps:
-    desc: Show Docker Hub compose service status
+    desc: Show registry compose service status
     cmds:
       - docker compose --env-file deploy/.env.hub -f deploy/docker-compose.hub.yml ps
 
   hub:logs:
-    desc: Follow logs for Docker Hub compose services
+    desc: Follow logs for registry compose services
     cmds:
       - docker compose --env-file deploy/.env.hub -f deploy/docker-compose.hub.yml logs -f
 
   hub:logs:backend:
-    desc: Follow backend logs only (Docker Hub stack)
+    desc: Follow backend logs only (registry stack)
     cmds:
       - docker compose --env-file deploy/.env.hub -f deploy/docker-compose.hub.yml logs -f backend
 
   hub:health:
-    desc: Check backend /health endpoint (Docker Hub stack)
+    desc: Check backend /health endpoint (registry stack)
     cmds:
       - |
         set -a
